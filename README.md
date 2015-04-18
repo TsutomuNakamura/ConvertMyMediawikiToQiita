@@ -2,6 +2,7 @@
 This is a program that converts form of my mediawiki to form of Qiita.
 
 # Convert Examples
+* Code
 ```bash
 ./Convert.py << '__EOF__'
 > <code>hoge</code> abcde <code>fuga</code>
@@ -21,7 +22,6 @@ $ ./Convert.py << '__EOF__'
 > __EOF__
 # hoge 
 ###### fuga
-__EOF__
 ```
 
 * Definishons
