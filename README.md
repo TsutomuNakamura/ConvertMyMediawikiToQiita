@@ -5,13 +5,14 @@ This is a program that converts form of my mediawiki to form of Qiita.
 * Code tag
 ```bash
 ./Convert.py << '__EOF__'
-> <code>hoge</code> abcde <code>fuga</code>
->   <span>test</span>
-> <code>hoge2</code><span>fuga2</span>
-> __EOF__
-`hoge` abcde `fuga`
-  <span>test</span>
-`hoge2`<span>fuga2</span>
+<code>hoge</code>
+<span>fuga</span>
+__EOF__
+```
+
+```bash
+`hoge`
+<span>fuga</span>
 ```
 
 * br tag
@@ -26,7 +27,6 @@ result:
 ```bash
 hoge
 fuga
-
 ```
 
 * Headings
@@ -50,15 +50,6 @@ result:
 :aaaa
 :aaaaa
 
-hogefjga
-;bbb
-:bbbb
-:bbbbb
-
-;xxx
-:yyy
-I'm living in Tokyo.
-
 ;ccc
 :ccc
 ;ddd
@@ -74,19 +65,6 @@ result:
   <dd>aaaaa</dd>
 </dl>
 
-hogefjga
-<dl>
-  <dt>bbb</dt>
-  <dd>bbbb</dd>
-  <dd>bbbbb</dd>
-</dl>
-
-<dl>
-  <dt>xxx</dt>
-  <dd>yyy</dd>
-</dl>
-I'm living in Tokyo.
-
 <dl>
   <dt>ccc</dt>
   <dd>ccc</dd>
@@ -95,20 +73,33 @@ I'm living in Tokyo.
 </dl>
 ```
 
-* Line breaks
+* Code segument
 ```bash
 ./Convert.py << '__EOF__'
-hoge<br>
-fuga<br />
+<syntaxhighlight lang="ruby">
+puts 'Hello, world!'
+</syntaxhighlight>
+
+Here is not text code segment.
+ Here is text
+ code segment.
 __EOF__
 ```
 
 result:
 ```bash
-hoge
-fuga
+```ruby
+puts 'Hello, world!'
+```　
 
+Here is not text code segment.
+```text
+Here is text
+code segment.
+```　
 ```
+(In actually, no multibyte blank will be output)
+
 
 To be continued...
 

@@ -32,6 +32,7 @@ class Convert:
 	# convert contents
 	def convert(self):
 
+		self.replace_code_segment(self.contents)
 		self.replace_type_definishion(self.contents)
 
 		self.contents = "".join(self.contents)
@@ -40,7 +41,7 @@ class Convert:
 		self.contents = self.replace_code_tag(self.contents)
 		self.contents = self.replace_headers(self.contents)
 
-		print(self.contents)
+		print(self.contents, end="")
 		return 0
 
 	# replacing...
@@ -69,9 +70,59 @@ class Convert:
 			last_match = current_match
 
 		if last_match:
-			text_list.append('</dl>')
+			text_list.append("</dl>\n")
 
 		return text_list
+
+	# replacing...
+	# <syntaxhighlight lang="langname">
+	# ~~~~~~~
+	# </syntaxhighlight>
+	def replace_code_segment(self, text_list):
+		syntax_blank_start_match = None
+		syntax_start_tag_match = None
+		syntax_finish_tag_match = None
+
+		syntax_blank_match_area = False
+		syntax_tag_match_nest_count = 0
+
+		for i,line in enumerate(text_list):
+			syntax_finish_tag_match = re.search('^</syntaxhighlight>$', line)
+			if syntax_finish_tag_match:
+				# found </syntaxhighlight> tag
+				if syntax_tag_match_nest_count == 1:
+					text_list[i] = "```\n"
+
+				if (syntax_tag_match_nest_count > 0):
+					syntax_tag_match_nest_count -= 1
+				continue
+
+			syntax_start_tag_match = re.search('^<syntaxhighlight lang="?(.*?)"?>$', line)
+			if syntax_start_tag_match:
+				# found <syntaxhighlight> tag
+				if syntax_tag_match_nest_count == 0:
+					text_list[i] = "```" + syntax_start_tag_match.group(1) + "\n"
+
+				syntax_tag_match_nest_count += 1
+				continue
+
+			syntax_blank_start_match = re.search('^ {1}(.*)', line)
+			if syntax_blank_start_match:
+				if syntax_tag_match_nest_count == 0:
+					if not syntax_blank_match_area:
+						text_list[i] = "```text\n" + syntax_blank_start_match.group(1) + "\n"
+						syntax_blank_match_area = True
+					else:
+						text_list[i] = syntax_blank_start_match.group(1) + "\n"
+
+			else:
+				if syntax_tag_match_nest_count == 0 and syntax_blank_match_area:
+					syntax_blank_match_area = False
+
+		if syntax_blank_match_area:
+			text_list.append("```\n")
+
+		return
 
 	# replacing...
 	# <br /> -> ""
