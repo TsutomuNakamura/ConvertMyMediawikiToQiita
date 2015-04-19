@@ -73,7 +73,7 @@ result:
 </dl>
 ```
 
-* Code segument
+* Code segment
 ```bash
 ./Convert.py << '__EOF__'
 <syntaxhighlight lang="ruby">
