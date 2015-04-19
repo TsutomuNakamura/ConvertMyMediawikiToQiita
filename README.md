@@ -2,7 +2,7 @@
 This is a program that converts form of my mediawiki to form of Qiita.
 
 # Convert Examples
-* Code
+* Code tag
 ```bash
 ./Convert.py << '__EOF__'
 > <code>hoge</code> abcde <code>fuga</code>
@@ -14,12 +14,31 @@ This is a program that converts form of my mediawiki to form of Qiita.
 `hoge2`<span>fuga2</span>
 ```
 
+* br tag
+```bash
+./Convert.py << '__EOF__'
+hoge<br>
+fuga<br />
+__EOF__
+```
+
+result:
+```bash
+hoge
+fuga
+
+```
+
 * Headings
 ```bash
-$ ./Convert.py << '__EOF__'
-> = hoge =
-> ====== fuga ======
-> __EOF__
+./Convert.py << '__EOF__'
+= hoge =
+====== fuga ======
+__EOF__
+```
+
+result:
+```bash
 # hoge 
 ###### fuga
 ```
@@ -27,24 +46,28 @@ $ ./Convert.py << '__EOF__'
 * Definishons
 ```bash
 ./Convert.py << '__EOF__'
-> ;aaa
-> :aaaa
-> :aaaaa
-> 
-> hogefjga
-> ;bbb
-> :bbbb
-> :bbbbb
-> 
-> ;xxx
-> :yyy
-> I'm living in Tokyo.
-> 
-> ;ccc
-> :ccc
-> ;ddd
-> :ddd
-> __EOF__
+;aaa
+:aaaa
+:aaaaa
+
+hogefjga
+;bbb
+:bbbb
+:bbbbb
+
+;xxx
+:yyy
+I'm living in Tokyo.
+
+;ccc
+:ccc
+;ddd
+:ddd
+__EOF__
+```
+
+result:
+```bash
 <dl>
   <dt>aaa</dt>
   <dd>aaaa</dd>
@@ -70,6 +93,21 @@ I'm living in Tokyo.
   <dt>ddd</dt>
   <dd>ddd</dd>
 </dl>
+```
+
+* Line breaks
+```bash
+./Convert.py << '__EOF__'
+hoge<br>
+fuga<br />
+__EOF__
+```
+
+result:
+```bash
+hoge
+fuga
+
 ```
 
 To be continued...

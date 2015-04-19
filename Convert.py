@@ -36,6 +36,7 @@ class Convert:
 
 		self.contents = "".join(self.contents)
 
+		self.contents = self.remove_br_tag(self.contents)
 		self.contents = self.replace_code_tag(self.contents)
 		self.contents = self.replace_headers(self.contents)
 
@@ -48,6 +49,7 @@ class Convert:
 	def replace_type_definishion(self, text_list):
 		last_match = None
 		current_match = None
+		beginning_blank = None
 
 		for i,line in enumerate(text_list):
 			current_match = re.search('^[;:].*', line)
@@ -70,6 +72,11 @@ class Convert:
 			text_list.append('</dl>')
 
 		return text_list
+
+	# replacing...
+	# <br /> -> ""
+	def remove_br_tag(self, text):
+		return  re.sub('<br ?/?>', '', text)
 
 	# replacing...
 	# "<code>"  -> "`"
