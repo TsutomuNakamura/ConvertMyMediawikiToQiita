@@ -101,6 +101,35 @@ code segment.
 (In actually, no multibyte blank will be output)
 
 
+* Code segment title in my own rule
+```bash
+./Convert.py << '__EOF__'
+This is tutorial of Java.
+* HelloWorld.java
+<syntaxhighlight lang="java">
+public class HelloWorld {
+    public static void main(String args[]) {
+        System.out.println("Hello world.");
+    }
+}
+</syntaxhighlight>
+__EOF__
+```
+
+result:
+```bash
+This is tutorial of Java.
+```java:HelloWorld.java
+public class HelloWorld {
+    public static void main(String args[]) {
+        System.out.println("Hello world.");
+    }
+}
+```　
+```
+(In actually, no multibyte blank will be output)
+
+
 To be continued...
 
 # Reference

@@ -87,9 +87,9 @@ class Convert:
 		syntax_tag_match_nest_count = 0
 
 		for i,line in enumerate(text_list):
+			# replace </syntaxhighlight> tag
 			syntax_finish_tag_match = re.search('^</syntaxhighlight>$', line)
 			if syntax_finish_tag_match:
-				# found </syntaxhighlight> tag
 				if syntax_tag_match_nest_count == 1:
 					text_list[i] = "```\n"
 
@@ -97,15 +97,29 @@ class Convert:
 					syntax_tag_match_nest_count -= 1
 				continue
 
+			# replace <syntaxhighlight> tag segment
 			syntax_start_tag_match = re.search('^<syntaxhighlight lang="?(.*?)"?>$', line)
 			if syntax_start_tag_match:
-				# found <syntaxhighlight> tag
+
 				if syntax_tag_match_nest_count == 0:
-					text_list[i] = "```" + syntax_start_tag_match.group(1) + "\n"
+					code_title = ""
+
+					if i > 0:
+						# format title that in my own rule in mediawiki to code segment title of quiita.
+						#
+						# * File.txt
+						# <syntaxhighlight lang="...">
+						my_rule_title = re.search('^\* (.*)', text_list[i - 1])
+						if my_rule_title:
+							text_list[i - 1] = ""
+							code_title = ":" + my_rule_title.group(1)
+
+					text_list[i] = "```" + syntax_start_tag_match.group(1) + code_title + "\n"
 
 				syntax_tag_match_nest_count += 1
 				continue
 
+			# replace code segment in a tail of blank
 			syntax_blank_start_match = re.search('^ {1}(.*)', line)
 			if syntax_blank_start_match:
 				if syntax_tag_match_nest_count == 0:
@@ -114,7 +128,6 @@ class Convert:
 						syntax_blank_match_area = True
 					else:
 						text_list[i] = syntax_blank_start_match.group(1) + "\n"
-
 			else:
 				if syntax_tag_match_nest_count == 0 and syntax_blank_match_area:
 					syntax_blank_match_area = False
