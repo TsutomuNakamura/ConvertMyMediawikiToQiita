@@ -61,6 +61,7 @@ class Convert:
 					text_list[i] = re.sub('^:(.*)', '  <dd>\\1</dd>', text_list[i])
 				else:
 					text_list[i] = re.sub('^;(.*)', '<dl>\n  <dt>\\1</dt>', text_list[i])
+					text_list[i] = re.sub('^:(.*)', '<dl>\n  <dd>\\1</dd>', text_list[i])
 
 			else:
 				if last_match:
