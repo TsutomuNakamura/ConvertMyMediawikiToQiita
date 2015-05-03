@@ -16,7 +16,6 @@ class Convert:
 		if not sys.stdin.isatty():
 			self.contents = sys.stdin.readlines()
 			return
-
 		self.usage()
 		sys.exit(1)
 
@@ -189,6 +188,7 @@ class Convert:
 						text_list[i] = syntax_blank_start_match.group(1) + "\n"
 			else:
 				if syntax_tag_match_nest_count == 0 and syntax_blank_match_area:
+					text_list[i] = "```\n" + text_list[i]
 					syntax_blank_match_area = False
 
 		if syntax_blank_match_area:
