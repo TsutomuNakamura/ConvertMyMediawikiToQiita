@@ -129,8 +129,56 @@ public class HelloWorld {
 ```
 (In actually, no multibyte blank will be output)
 
+* Table segment
+```bash
+$ ./Convert.py << '__EOF__'
+{| class="wikitable"
+|+ align="top" style="text-align: left" |''テーブルのサンプル''
+|-
+! subject1
+! subject2
+! subject3
+|-
+| text1
+| text2
+| text3
+|-
+| text1 || text2 || text3
+|-
+| text1 !! text2 || text3
+|-
+! text1 !! text2 !! text3
+|-
+! text1 || text2 !! text3
+|}
+__EOF__
 
-To be continued...
+* テーブルのサンプル
+<table><tbody>
+  <tr>
+    <th> subject1</th>
+    <th> subject2</th>
+    <th> subject3</th>
+  </tr>
+  <tr>
+    <td> text1</td>
+    <td> text2</td>
+    <td> text3</td>
+  </tr>
+  <tr>
+    <td> text1 </td><td> text2 </td><td> text3</td>
+  </tr>
+  <tr>
+    <td> text1 </td><th> text2 </th><td> text3</td>
+  </tr>
+  <tr>
+    <th> text1 </th><th> text2 </th><th> text3</th>
+  </tr>
+  <tr>
+    <th> text1 </th><td> text2 </td><th> text3</th>
+  </tr>
+</tbody></table>
+```
 
 # Reference
 ##Markdowns that be used in Qiita

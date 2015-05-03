@@ -8,7 +8,7 @@ class Convert:
 	contents		= None
 
 	def __init__(self):
-		# No file or stdin, then exit
+		# No file or no stdin, then exit
 		if 2 <= len(sys.argv):
 			self.contents = open(sys.argv[1]).readlines()
 			return
@@ -33,7 +33,8 @@ class Convert:
 	def convert(self):
 
 		self.replace_code_segment(self.contents)
-		self.replace_type_definishion(self.contents)
+		self.replace_type_definition(self.contents)
+		self.replace_table_definition(self.contents)
 
 		self.contents = "".join(self.contents)
 
@@ -47,7 +48,7 @@ class Convert:
 	# replacing...
 	# ";" -> <dt>
 	# ":" -> <dd>
-	def replace_type_definishion(self, text_list):
+	def replace_type_definition(self, text_list):
 		last_match = None
 		current_match = None
 		beginning_blank = None
@@ -55,7 +56,7 @@ class Convert:
 		for i,line in enumerate(text_list):
 			current_match = re.search('^[;:].*', line)
 			if current_match:
-				# Convert mediawiki definishon format to Quiita definishon format.
+				# Convert definition format
 				if last_match:
 					text_list[i] = re.sub('^;(.*)', '  <dt>\\1</dt>', text_list[i])
 					text_list[i] = re.sub('^:(.*)', '  <dd>\\1</dd>', text_list[i])
@@ -74,6 +75,63 @@ class Convert:
 
 		return text_list
 
+	# Convert table definition
+	def replace_table_definition(self, text_list):
+		is_table_segment = False
+		close_tr_tag = ""
+
+		head_start_tag_map	= {"|": "    <td>", "!": "    <th>"}
+		head_end_tag_map	= {"|": "</td>", "!": "</th>"}
+		tag_start_map		= {"||": "<td>", "!!": "<th>"}
+		tag_end_map			= {"||": "</td>", "!!": "</th>"}
+
+		for i,line in enumerate(text_list):
+			if not is_table_segment:
+				is_table_segment = re.search('^\{\|.*', line)
+				if is_table_segment:
+					text_list[i] = "\n<table><tbody>\n"
+
+					# check next line
+					match_title_line = re.search('^\|\+.*\|\'\'(.*)\'\'', text_list[i + 1])
+					if match_title_line:
+						text_list[i] = "\n" + "* " + match_title_line.group(1) + text_list[i]
+						text_list[i + 1] = ""
+			else:
+					
+				# 
+				ignore_line = re.search('^\|\-.*', line)
+				if ignore_line:
+					text_list[i] = close_tr_tag + "  <tr>\n"
+					close_tr_tag = "  </tr>\n"
+					continue
+				
+				# end of table segment
+				is_end_of_table_segment = re.search('\|\}$',line)
+				if is_end_of_table_segment:
+					text_list[i] = close_tr_tag + "</tbody></table>\n"
+					is_table_segment = False
+					continue
+
+				tag_start_line = re.search('^(\!|\|){1}(.*)', line)
+				if tag_start_line:
+					# replacing... | -> <td>, ! -> <th>
+					text_list[i] = head_start_tag_map[tag_start_line.group(1)] \
+							+ tag_start_line.group(2)
+					# replacing... | -> </td>, ! -> </th>
+					next_close_tag = head_end_tag_map[tag_start_line.group(1)]
+					
+					match_line = re.search('(\|\||\!\!)', text_list[i])
+					while match_line:
+						# || -> <td>, !! -> <th>
+						text_list[i] = re.sub(r'(\|\||\!\!)', next_close_tag + tag_start_map[match_line.group(1)], text_list[i], 1)
+						# || -> </td>, !! -> </th>
+						next_close_tag = tag_end_map[match_line.group(1)]
+
+						match_line = re.search('(\|\||\!\!)', text_list[i])
+
+					text_list[i] = text_list[i] + next_close_tag + "\n"
+					continue
+
 	# replacing...
 	# <syntaxhighlight lang="langname">
 	# ~~~~~~~
@@ -91,7 +149,7 @@ class Convert:
 			syntax_finish_tag_match = re.search('^</syntaxhighlight>$', line)
 			if syntax_finish_tag_match:
 				if syntax_tag_match_nest_count == 1:
-					text_list[i] = "```\n"
+					text_list[i] = "```\n\n"
 
 				if (syntax_tag_match_nest_count > 0):
 					syntax_tag_match_nest_count -= 1
@@ -114,7 +172,7 @@ class Convert:
 							text_list[i - 1] = ""
 							code_title = ":" + my_rule_title.group(1)
 
-					text_list[i] = "```" + syntax_start_tag_match.group(1) + code_title + "\n"
+					text_list[i] = "\n```" + syntax_start_tag_match.group(1) + code_title + "\n"
 
 				syntax_tag_match_nest_count += 1
 				continue
@@ -133,7 +191,7 @@ class Convert:
 					syntax_blank_match_area = False
 
 		if syntax_blank_match_area:
-			text_list.append("```\n")
+			text_list.append("```\n\n")
 
 		return
 
@@ -164,3 +222,4 @@ class Convert:
 
 if __name__ == "__main__":
 	Convert().convert()
+
