@@ -98,7 +98,6 @@ class Convert:
 						text_list[i + 1] = ""
 			else:
 					
-				# 
 				ignore_line = re.search('^\|\-.*', line)
 				if ignore_line:
 					text_list[i] = close_tr_tag + "  <tr>\n"
@@ -170,7 +169,10 @@ class Convert:
 						my_rule_title = re.search('^\* (.*)', text_list[i - 1])
 						if my_rule_title:
 							text_list[i - 1] = ""
-							code_title = ":" + my_rule_title.group(1)
+
+							# TODO: This process is interim handling.
+							#       A half width of blank causes irregular appearance.
+							code_title = ":" + my_rule_title.group(1).replace(' ', '')
 
 					text_list[i] = "\n```" + syntax_start_tag_match.group(1) + code_title + "\n"
 
