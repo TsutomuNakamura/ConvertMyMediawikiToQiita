@@ -182,15 +182,33 @@ class Convert:
 			# replace code segment in a tail of blank
 			syntax_blank_start_match = re.search('^ {1}(.*)', line)
 			if syntax_blank_start_match:
+
+				code_title = ""
+				if i > 0:
+					# format title that in my own rule in mediawiki
+					# to code segment title of quiita.
+					my_rule_title = re.search('^\* (.*)', text_list[i - 1])
+					if my_rule_title:
+						text_list[i - 1] = ""
+						# TODO: This process is interim handling.
+						#       A half width of blank causes irregular appearance.
+						code_title = ":" + my_rule_title.group(1).replace(' ', '')
+
 				if syntax_tag_match_nest_count == 0:
 					if not syntax_blank_match_area:
-						text_list[i] = "```text\n" + syntax_blank_start_match.group(1) + "\n"
+						text_list[i] = "\n```text" + code_title + "\n" + \
+								syntax_blank_start_match.group(1) + "\n"
 						syntax_blank_match_area = True
 					else:
 						text_list[i] = syntax_blank_start_match.group(1) + "\n"
 			else:
 				if syntax_tag_match_nest_count == 0 and syntax_blank_match_area:
-					text_list[i] = "```\n" + text_list[i]
+					# FIXME: 厳密には、配列の長さを算出して、
+					#        ファイルの一番最後の行である場合は、push するようにする。
+					temp = text_list[i]
+					text_list[i] = "```\n"
+					text_list.insert(i + 1, temp)
+
 					syntax_blank_match_area = False
 
 		if syntax_blank_match_area:
