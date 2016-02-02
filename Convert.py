@@ -233,12 +233,12 @@ class Convert:
     # .......
     # ====== text ======  -> ###### text
     def replace_headers(self, text):
-        text = re.sub('======(.*)======', '######\\1', text)
-        text = re.sub('=====(.*)=====', '#####\\1', text)
-        text = re.sub('====(.*)====', '####\\1', text)
-        text = re.sub('===(.*)===', '###\\1', text)
-        text = re.sub('==(.*)==', '##\\1', text)
-        text = re.sub('=(.*)=', '#\\1', text)
+        text = re.sub('^======(.*)======', '######\\1', text, flags=re.M)
+        text = re.sub('^=====(.*)=====', '#####\\1',    text, flags=re.M)
+        text = re.sub('^====(.*)====', '####\\1',       text, flags=re.M)
+        text = re.sub('^===(.*)===', '###\\1',          text, flags=re.M)
+        text = re.sub('^==(.*)==', '##\\1',             text, flags=re.M)
+        text = re.sub('^=(.*)=', '#\\1',                text, flags=re.M)
         return text
 
 if __name__ == "__main__":
