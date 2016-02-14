@@ -48,30 +48,12 @@ class Convert:
     # ";" -> <dt>
     # ":" -> <dd>
     def replace_type_definition(self, text_list):
-        last_match = None
-        current_match = None
-        beginning_blank = None
 
         for i,line in enumerate(text_list):
-            current_match = re.search('^[;:].*', line)
-            if current_match:
+            if re.search('^[;:].*', line):
                 # Convert definition format
-                if last_match:
-                    text_list[i] = re.sub('^;(.*)', '  <dt>\\1</dt>', text_list[i])
-                    text_list[i] = re.sub('^:(.*)', '  <dd>\\1</dd>', text_list[i])
-                else:
-                    text_list[i] = re.sub('^;(.*)', '<dl>\n  <dt>\\1</dt>', text_list[i])
-                    text_list[i] = re.sub('^:(.*)', '<dl>\n  <dd>\\1</dd>', text_list[i])
-
-            else:
-                if last_match:
-                    # If end of <dl> section, close this section
-                    text_list[i] = '</dl>\n' + text_list[i]
-
-            last_match = current_match
-
-        if last_match:
-            text_list.append("</dl>\n")
+                text_list[i] = re.sub('^; (.*)', '- \\1',     text_list[i])
+                text_list[i] = re.sub('^: (.*)', '    - \\1', text_list[i])
 
         return text_list
 
