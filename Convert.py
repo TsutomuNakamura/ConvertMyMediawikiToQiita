@@ -12,7 +12,7 @@ class Convert:
         if 2 <= len(sys.argv):
             self.contents = open(sys.argv[1]).readlines()
             return
-        
+
         if not sys.stdin.isatty():
             self.contents = sys.stdin.readlines()
             return
@@ -62,10 +62,10 @@ class Convert:
         is_table_segment = False
         close_tr_tag = ""
 
-        head_start_tag_map    = {"|": "    <td>", "!": "    <th>"}
+        head_start_tag_map  = {"|": "    <td>", "!": "    <th>"}
         head_end_tag_map    = {"|": "</td>", "!": "</th>"}
-        tag_start_map        = {"||": "<td>", "!!": "<th>"}
-        tag_end_map            = {"||": "</td>", "!!": "</th>"}
+        tag_start_map       = {"||": "<td>", "!!": "<th>"}
+        tag_end_map         = {"||": "</td>", "!!": "</th>"}
 
         for i,line in enumerate(text_list):
             if not is_table_segment:
@@ -79,13 +79,13 @@ class Convert:
                         text_list[i] = "\n" + "* " + match_title_line.group(1) + text_list[i]
                         text_list[i + 1] = ""
             else:
-                    
+
                 ignore_line = re.search('^\|\-.*', line)
                 if ignore_line:
                     text_list[i] = close_tr_tag + "  <tr>\n"
                     close_tr_tag = "  </tr>\n"
                     continue
-                
+
                 # end of table segment
                 is_end_of_table_segment = re.search('\|\}$',line)
                 if is_end_of_table_segment:
@@ -100,7 +100,7 @@ class Convert:
                             + tag_start_line.group(2)
                     # replacing... | -> </td>, ! -> </th>
                     next_close_tag = head_end_tag_map[tag_start_line.group(1)]
-                    
+
                     match_line = re.search('(\|\||\!\!)', text_list[i])
                     while match_line:
                         # || -> <td>, !! -> <th>
